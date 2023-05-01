@@ -1,6 +1,7 @@
 library(tidyverse)
 library(here)
 source("NSGS.R")
+source("s_S_inventory.R")
 # testing the algorithm on (s,S) inventory system from Koenig and Law (1985)
 
 # NSGS ----
