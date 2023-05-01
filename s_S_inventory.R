@@ -1,4 +1,4 @@
-MySim <- function(s,S, n=1, RandomSeed=-1){
+s_S <- function(s,S, n=1, RandomSeed=-1){
   # simulates the (s,S) inventory example of Koenig & Law
   # (s,S) define inventory system
   # n = number of replications
@@ -30,6 +30,6 @@ MySim <- function(s,S, n=1, RandomSeed=-1){
     }
     Y[j] <- Cost/30
   }
-  -Y
+  Y
 }
 
