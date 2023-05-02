@@ -1,6 +1,6 @@
 # KN algorithm
 
-KN <- function(a,IZ,n_0,h,k,replication = 1) {
+KN <- function(a,IZ,n_0,k,replication = 1) {
 
   # initiate placeholder for Y_i(x_i)
   Y <- data.frame(matrix(ncol=k,nrow = 0))
@@ -49,7 +49,7 @@ KN <- function(a,IZ,n_0,h,k,replication = 1) {
     # for each pair i not equal j in I_old, calculate W[i,j]
     for (i in I_old) {
       for (j in I_old) {
-        W[i,j] <- max(0,( IZ/(2*r)*  (  (h_2*S_2[i,j])/(IZ^2) ) -r  ))
+        W[i,j] <- max(0,( IZ/(2*r)*  (  (h_2*S_2[i,j])/(IZ^2)  -r ) ))
       }
       # replace case when i=j with NA
       W[i,i] <- NA
