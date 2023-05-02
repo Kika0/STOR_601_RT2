@@ -5,18 +5,7 @@ source("KN.R")
 source("s_S_inventory.R")
 # testing the algorithm on (s,S) inventory system from Koenig and Law (1985)
 
-# NSGS ----
-# From Wilcox (1984) table we have h(n_0=20,k=5,1-a/2=0.975)=3.4
-# alternatively, for n_0=10, h(n_0=10,...)=3.174
-NSGS(a=0.05,IZ=0.1,n_0=10,h=3.174,k=5)
-
-# perform 50 times
-nsgs <- list()
-for (i in 1:2) {
-  nsgs[[i]] <- NSGS(a=0.05,IZ=0.1,n_0=10,h=3.174,k=5)
-}
-
-# example of (s,S) inventory system
+# example of (s,S) inventory system ---------
 s_S(s=20,S=40,n=100000,RandomSeed = 1)
 
 # create dataframe of feasible solutions
@@ -37,27 +26,71 @@ s_S_int <- function(i,seed) {
   s_S(s=five_sols[i,2],five_sols[i,3],n=1,RandomSeed = seed)
 }
 
-# KN ----
-# test KN with same parameters
-KN(a=0.05,IZ=0.1,n_0=10,h=3.174,k=5)
+# NSGS ----
+# From Wilcox (1984) table we have h(n_0=20,k=5,1-a/2=0.975)=3.4
+# alternatively, for n_0=10, h(n_0=10,...)=3.692
+NSGS(a=0.05,IZ=1,n_0=10,h=3.692,k=5)
 
 # perform 50 times
-kn <- list()
-for (i in 1:50) {
-  kn[[i]] <- KN(a=0.05,IZ=0.1,n_0=10,h=3.174,k=5,replication=i)
+nsgs <- list()
+for (i in 1:2) {
+  nsgs[[i]] <- NSGS(a=0.05,IZ=1,n_0=10,h=3.692,k=5)
 }
 
 # print in df format
 solution_index <- rep(1:5,50)
 macroreplication <- rep(1:50,times=1,each=5)
 optimal_solution <- c()
-number_of_scenarios <- c()
+number_of_replications <- c()
+is_in_subset <- c()
 for (i in 1:50) {
-  kn <- KN(a=0.05,IZ=0.1,n_0=10,h=3.174,k=5, replication=i)
+  nsgs <- NSGS(a=0.05,IZ=1,n_0=10, h=3.692, k=5, replication=i)
+  optimal_solution[(5*(i-1)+1):(5*i)] <- rep(nsgs[[1]],5)
+  number_of_replications[(5*(i-1)+1):(5*i)] <- nsgs[[2]]
+  is_in_subset[(5*(i-1)+1):(5*i)] <- nsgs[[3]]
+}
+
+nsgs_solutions <- data.frame(macroreplication = macroreplication, solution_index=solution_index, 
+                           optimal_solution = optimal_solution,number_of_replications = number_of_replications,
+                           is_in_subset = is_in_subset) %>% 
+  mutate(solution_index = factor(as.character(solution_index),levels = c("1","2","3","4","5")))
+nsgs_solutions %>% view()
+
+# KN ----
+# test KN with the same parameters
+KN(a=0.05,IZ=1,n_0=10,k=5)
+
+# perform 50 times
+kn <- list()
+for (i in 1:50) {
+  kn[[i]] <- KN(a=0.05,IZ=0.1,n_0=10,k=5,replication=i)
+}
+
+# print in df format
+solution_index <- rep(1:5,50)
+macroreplication <- rep(1:50,times=1,each=5)
+optimal_solution <- c()
+number_of_replications <- c()
+for (i in 1:50) {
+  kn <- KN(a=0.05,IZ=1,n_0=10,k=5, replication=i)
   optimal_solution[(5*(i-1)+1):(5*i)] <- rep(kn[[1]],5)
-  number_of_scenarios[(5*(i-1)+1):(5*i)] <- kn[[2]]
+  number_of_replications[(5*(i-1)+1):(5*i)] <- kn[[2]]
 }
 
 kn_solutions <- data.frame(macroreplication = macroreplication, solution_index=solution_index, 
-                           optimal_solution = optimal_solution,number_of_scenarios = number_of_scenarios)
+                           optimal_solution = optimal_solution,number_of_replications = number_of_replications) %>% 
+  mutate(solution_index = factor(as.character(solution_index),levels = c("1","2","3","4","5")))
 kn_solutions %>% view()
+
+# Boxplots of how many simulation
+# NSGS
+ggplot(nsgs_solutions,aes(x=solution_index,y=number_of_replications)) + geom_boxplot()
+
+# KN
+ggplot(kn_solutions,aes(x=solution_index,y=number_of_replications)) + geom_boxplot()
+
+# put together in one plot
+together <- nsgs_solutions %>% rbind((kn_solutions %>% mutate(is_in_subset=rep(NA,250))) )
+Procedure <- c(rep("NSGS",250),rep("KN",250))
+together <- together %>% mutate(Procedure=factor(Procedure,levels=c("NSGS","KN")))
+ggplot(together,aes(x=solution_index,y=number_of_replications,fill=Procedure)) + geom_boxplot()
