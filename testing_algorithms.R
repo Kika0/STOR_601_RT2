@@ -11,9 +11,10 @@ NSGS(a=0.05,IZ=0.1,n_0=20,h=3.4,k=5)
 # perform 1000 times
 nsgs <- c()
 for (i in 1:1000) {
-  nsgs[i] <- NSGS(a=0.05,IZ=0.1,n_0=20,h=3.4,k=5)
+  nsgs[i] <- NSGS(a=0.05,IZ=0.1,n_0=20,h=3.4,k=5)[[1]]
 }
 
+# example of (s,S) inventory system
 s_S(s=20,S=40,n=100000,RandomSeed = 1)
 
 # create dataframe of feasible solutions
