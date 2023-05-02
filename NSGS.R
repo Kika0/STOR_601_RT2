@@ -53,7 +53,7 @@ NSGS <- function(a,IZ,n_0,h,k) {
       Y_bar[i] <- mean(Y[1:N[i],i])
     }
     else
-    {N[i] <- 0}
+    {N[i] <- n_0}
   }
-  return(which.min(Y_bar))
+  return(list(optimal_solution=which.min(Y_bar),number_of_simulations=N,is_in_subset=I))
 }
