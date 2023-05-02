@@ -1,6 +1,7 @@
 library(tidyverse)
 library(here)
 source("NSGS.R")
+source("KN.R")
 source("s_S_inventory.R")
 # testing the algorithm on (s,S) inventory system from Koenig and Law (1985)
 
@@ -36,4 +37,20 @@ s_S_int <- function(i,seed) {
   s_S(s=five_sols[i,2],five_sols[i,3],n=1,RandomSeed = seed)
 }
 
+# KN ----
+# test KN with same parameters
+KN(a=0.05,IZ=0.1,n_0=10,h=3.174,k=5)
 
+# perform 50 times
+kn <- list()
+for (i in 1:50) {
+  kn[[i]] <- KN(a=0.05,IZ=0.1,n_0=10,h=3.174,k=5,replication=i)
+}
+
+# print in df format
+solution_index <- rep(1:5,50)
+macroreplication <- rep(1:50,times=1,each=5)
+for (i in 1:50) {
+  optimal_solution <- 
+  number_of_scenarios <- 
+}
