@@ -94,3 +94,23 @@ together <- nsgs_solutions %>% rbind((kn_solutions %>% mutate(is_in_subset=rep(N
 Procedure <- c(rep("NSGS",250),rep("KN",250))
 together <- together %>% mutate(Procedure=factor(Procedure,levels=c("NSGS","KN")))
 ggplot(together,aes(x=solution_index,y=number_of_replications,fill=Procedure)) + geom_boxplot()
+
+# (s,S) second example of inventory system ----
+i <- 1:4950
+s <- c()
+S <- c()
+for (j in 1:99) {
+  s <- c(s,rep(j,(100-j)))
+  S <- c(S,(j+1):100)
+}
+E_Y <- rep(NA,4950)
+
+many_sols <- data.frame(i=i,s=s,S=S,E_Y=E_Y)
+# simulate million times to get an accurate estimate E[Y] (objective value)
+for (i in 1:4950) {
+  E_Y[i] <- mean(s_S(s=many_sols[i,2],S=many_sols[i,3],n=10000,RandomSeed = 1))
+}
+many_sols <- data.frame(i=1:4950,s=s,S=S,E_Y=E_Y)
+many_sols %>% arrange(E_Y) %>%  view()
+# save file to save future computation (took 2 hours to run E_Y with 10^4 for each of 4950 solutions)
+#write_rds(many_sols,"s_S_fesible_solutions_with_expected_values.rds")
