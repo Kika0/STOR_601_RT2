@@ -1,6 +1,6 @@
 # KN algorithm
 
-KN <- function(a,IZ,n_0,h,k) {
+KN <- function(a,IZ,n_0,h,k,replication = 1) {
 
   # initiate placeholder for Y_i(x_i)
   Y <- data.frame(matrix(ncol=k,nrow = 0))
@@ -23,7 +23,9 @@ KN <- function(a,IZ,n_0,h,k) {
  # -----------------------------------------------------------
   # simulate each feasible solution n_0 times 
   for (i in I) {
-    Y[1:n_0,i] <- rnorm(n_0,mean=0.1*i,sd=1)
+    for (j in 1:n_0) {
+      Y[j,i] <- s_S_int(i=i,seed=j+1000*replication)
+    }
     # calculate the sample mean
     Y_bar[i] <- mean(Y[1:n_0,i])
   }
@@ -57,7 +59,7 @@ KN <- function(a,IZ,n_0,h,k) {
     # create subset I
     for(i in I_old) {
       if (sum(Y_bar[i] <= (Y_bar + W[i,]),na.rm = TRUE)==(k-1)) {
-        I_p <- c(I,i)
+        I_p <- c(I_p,i)
       }
     }
     
@@ -66,9 +68,9 @@ KN <- function(a,IZ,n_0,h,k) {
   
   for (i in I) {
       # simulate x_i once
-      Y[nrow(Y)+1,i] <- rnorm(n=1,mean=0.1*i,sd=1)
+      Y[(r+1),i] <- s_S_int(i=i,seed =((r+1)+1000*replication) )
       # calculate the sample mean
-      Y_bar[i] <- mean(Y[1:nrow(Y),i])
+      Y_bar[i] <- mean(Y[1:(r+1),i],na.rm=TRUE)
     }
   # increment r
     r <- r+1
