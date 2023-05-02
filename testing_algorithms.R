@@ -50,7 +50,14 @@ for (i in 1:50) {
 # print in df format
 solution_index <- rep(1:5,50)
 macroreplication <- rep(1:50,times=1,each=5)
+optimal_solution <- c()
+number_of_scenarios <- c()
 for (i in 1:50) {
-  optimal_solution <- 
-  number_of_scenarios <- 
+  kn <- KN(a=0.05,IZ=0.1,n_0=10,h=3.174,k=5, replication=i)
+  optimal_solution[(5*(i-1)+1):(5*i)] <- rep(kn[[1]],5)
+  number_of_scenarios[(5*(i-1)+1):(5*i)] <- kn[[2]]
 }
+
+kn_solutions <- data.frame(macroreplication = macroreplication, solution_index=solution_index, 
+                           optimal_solution = optimal_solution,number_of_scenarios = number_of_scenarios)
+kn_solutions %>% view()
