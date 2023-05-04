@@ -10,7 +10,8 @@ The repository includes:
 - table of optimal values of $4950$ solutions to the inventory problem (simulated as mean of $10000$ replications)
 - boxplots of number of simulations of each solution across $50$ macroreplications
 
-References:
+### References
+
 Nelson, B. L., Swann, J., Goldsman, D., and Song, W. (2001). Simple procedures for selecting the
 best simulated system when the number of alternatives is large. Operations Research, 49:950–963.
 
